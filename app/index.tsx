@@ -21,7 +21,7 @@ export default function HomeScreen () {
 
 
   const tasks: task[] = [
-    {id: 1, name: "Task 1", importance: 0.1, urgency: 0.2, energy: 0.4 },  
+    {id: 1, name: "Long long long long long long long long long task name", importance: 0.1, urgency: 0.2, energy: 0.4 },  
     {id: 2, name: "Task 2", importance: 0.3, urgency: 0.6, energy: 0.3 },  
     {id: 3, name: "Task 3", importance: 0.7, urgency: 0.5, energy: 0.2 },  
     {id: 4, name: "Task 4", importance: 0.1, urgency: 0.2, energy: 0.4 },  
@@ -39,10 +39,10 @@ export default function HomeScreen () {
     <View style={{flex:1}}>
 
       <View style={{
-            
-            marginLeft: 10,
-            marginRight: 0,
-            marginBottom:130}}>
+        marginLeft: 10,
+        marginRight: 10,
+        marginBottom:130
+      }}>
 
         <FlatList
           
@@ -73,8 +73,7 @@ export default function HomeScreen () {
           <View style={{flex: 0,
   alignItems: 'center',}}>  
             
-            <Button onPressOut={() => navigation.navigate('edit')
-}> New task</Button>
+            <Button onPress={() => navigation.navigate('edit')}>New task</Button>
             
           </View>
 

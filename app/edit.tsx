@@ -7,23 +7,35 @@ import {
   View,
 } from 'react-native';
 
+import Slider from '@react-native-community/slider';
+
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { task } from '../types/task';
 
 import { Button } from '@react-navigation/elements';
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 function createTask(navigationParam: NavigationProp<ParamListBase>) {
   // there's almost certainly a better way to get the navigation prop
   // this solution works, though!
   const navigation = navigationParam;
 
-  
-
   navigation.goBack();
 }
 
-export default function EditScreen() {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  
+type RootStackParamList = {
+  index: undefined;
+  about: undefined;
+  settings: undefined;
+  edit: { task?: task } | undefined;
+};
+
+type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'edit'>;
+
+
+
+export default function EditScreen({ navigation, route }: EditScreenProps) {
+  const task = route.params?.task; // or route.params.taskId 
   return (
 
     <View style={{flex:1}}>
@@ -32,6 +44,7 @@ export default function EditScreen() {
       }}>
         <TextInput
         placeholder="Task name"
+        defaultValue={task?.name ?? ""}
         // onChangeText={newText => setText(newText)} // how do i change the text?
         style={{
           height: 60,
@@ -40,8 +53,49 @@ export default function EditScreen() {
           borderWidth: 3,
           borderRadius: 10,
           fontSize:20,
+          color: 'black',
         }}
       />
+
+      <Text style={styles.titleText}>
+        Task Importance
+      </Text>
+      <Slider
+        style={{height: 40}}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="purple"
+        maximumTrackTintColor="black"
+        thumbTintColor="purple"
+        value={task?.importance}
+      />
+
+      <Text style={styles.titleText}>
+        Task Urgency
+      </Text>
+      <Slider
+        style={{height: 40}}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="purple"
+        maximumTrackTintColor="black"
+        thumbTintColor="purple"
+        value={task?.urgency}
+      />
+
+      <Text style={styles.titleText}>
+        Task Energy
+      </Text>
+      <Slider
+        style={{height: 40}}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="purple"
+        maximumTrackTintColor="black"
+        thumbTintColor="purple"
+        value={task?.energy}
+      />
+
       </ScrollView>
 
       <View style={styles.containerBottom}>
@@ -62,6 +116,12 @@ export default function EditScreen() {
 const styles = StyleSheet.create({
   containerStart: {
     fontSize: 20,
+  },
+  titleText: {
+    fontSize: 20,
+    fontFamily: 'sans-serif',
+    fontWeight: 'bold',
+    paddingTop:10,
   },
   containerBottom: {
     backgroundColor: 'white',
