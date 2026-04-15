@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -14,6 +14,7 @@ import type { task } from '../types/task';
 
 import { Button } from '@react-navigation/elements';
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { useTasks } from '../contexts/TasksContext';
 
 function createTask(navigationParam: NavigationProp<ParamListBase>) {
   // there's almost certainly a better way to get the navigation prop
@@ -36,6 +37,44 @@ type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'edit'>;
 
 export default function EditScreen({ navigation, route }: EditScreenProps) {
   const task = route.params?.task; // or route.params.taskId 
+  const { updateTask } = useTasks();
+  const [taskName, setTaskName] = useState(task?.name ?? '');
+  const [importance, setImportance] = useState(task?.importance ?? 0);
+  const [urgency, setUrgency] = useState(task?.urgency ?? 0);
+  const [taskEnergy, setTaskEnergy] = useState(task?.energy ?? 0);
+
+  function setText(newText: string): void {
+    setTaskName(newText);
+    if (task) {
+      const updatedTask = { ...task, name: newText };
+      updateTask(updatedTask);
+    }
+  }
+
+  function updateImportance(newValue: number): void {
+    setImportance(newValue);
+    if (task) {
+      const updatedTask = { ...task, importance: newValue };
+      updateTask(updatedTask);
+    }
+  }
+
+  function updateUrgency(newValue: number): void {
+    setUrgency(newValue);
+    if (task) {
+      const updatedTask = { ...task, urgency: newValue };
+      updateTask(updatedTask);
+    }
+  }
+
+  function updateEnergy(newValue: number): void {
+    setTaskEnergy(newValue);
+    if (task) {
+      const updatedTask = { ...task, energy: newValue };
+      updateTask(updatedTask);
+    }
+  }
+
   return (
 
     <View style={{flex:1}}>
@@ -44,8 +83,8 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
       }}>
         <TextInput
         placeholder="Task name"
-        defaultValue={task?.name ?? ""}
-        // onChangeText={newText => setText(newText)} // how do i change the text?
+        value={taskName}
+        onChangeText={newText => setText(newText)} // how do i change the text?
         style={{
           height: 60,
           padding: 5,
@@ -67,7 +106,8 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         minimumTrackTintColor="purple"
         maximumTrackTintColor="black"
         thumbTintColor="purple"
-        value={task?.importance}
+        value={importance}
+        onValueChange={updateImportance}
       />
 
       <Text style={styles.titleText}>
@@ -80,7 +120,8 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         minimumTrackTintColor="purple"
         maximumTrackTintColor="black"
         thumbTintColor="purple"
-        value={task?.urgency}
+        value={urgency}
+        onValueChange={updateUrgency}
       />
 
       <Text style={styles.titleText}>
@@ -93,7 +134,8 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         minimumTrackTintColor="purple"
         maximumTrackTintColor="black"
         thumbTintColor="purple"
-        value={task?.energy}
+        value={taskEnergy}
+        onValueChange={updateEnergy}
       />
 
       </ScrollView>

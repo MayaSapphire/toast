@@ -1,6 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { Image, TouchableOpacity, View } from 'react-native';
+import { EnergyProvider } from '../contexts/EnergyContext';
+import { TasksProvider } from '../contexts/TasksContext';
 import AboutScreen from './about';
 import EditScreen from './edit';
 import HomeScreen from './index';
@@ -10,7 +12,9 @@ const Stack = createNativeStackNavigator();
 
 export default function RootLayout() {
   return (
-    <Stack.Navigator>
+    <EnergyProvider>
+      <TasksProvider>
+        <Stack.Navigator>
       <Stack.Screen name="index" component={HomeScreen} options={({ navigation, route }) => ({
             title: 'Task list',
             headerRight: () => (
@@ -31,7 +35,7 @@ export default function RootLayout() {
           })}
       />
 
-      <Stack.Screen name="about" component={AboutScreen} />
+      <Stack.Screen name="about" component={AboutScreen} options={{title:"About"}}/>
       <Stack.Screen name="settings" component={SettingsScreen} options={({ navigation, route }) => ({
             title: 'Settings',
             headerRight: () => (
@@ -53,5 +57,7 @@ export default function RootLayout() {
       />
       <Stack.Screen name="edit" component={EditScreen} options={{ title: 'Edit task' }} />
     </Stack.Navigator>
+      </TasksProvider>
+    </EnergyProvider>
   );
 }

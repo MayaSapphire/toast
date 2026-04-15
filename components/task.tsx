@@ -2,12 +2,26 @@ import Slider from '@react-native-community/slider';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useTasks } from '../contexts/TasksContext';
 import { task } from "../types/task";
 
 
 const Task = ({ task }: { task: task }) => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  return <View style={{marginRight:20}}>
+  const { updateTask } = useTasks();
+
+  const updateImportance = (value: number) => {
+    updateTask({ ...task, importance: value });
+  };
+
+  const updateUrgency = (value: number) => {
+    updateTask({ ...task, urgency: value });
+  };
+
+  const updateEnergy = (value: number) => {
+    updateTask({ ...task, energy: value });
+  };
+  return(
     <TouchableOpacity
         onPress={() => {
         navigation.navigate('edit', { task: task });
@@ -27,6 +41,7 @@ const Task = ({ task }: { task: task }) => {
                     maximumTrackTintColor="black"
                     thumbTintColor="purple"
                     value={task.importance}
+                    onValueChange={updateImportance}
                 />
             </View>
             <View style={{flexDirection: 'row'}}>
@@ -41,6 +56,7 @@ const Task = ({ task }: { task: task }) => {
                     maximumTrackTintColor="black"
                     thumbTintColor="purple"
                     value={task.urgency}
+                    onValueChange={updateUrgency}
                 />
             </View>
             <View style={{flexDirection: 'row',}}>
@@ -55,11 +71,12 @@ const Task = ({ task }: { task: task }) => {
                     maximumTrackTintColor="black"
                     thumbTintColor="purple"
                     value={task.energy}
+                    onValueChange={updateEnergy}
                 />
             </View>
         </View>
     </TouchableOpacity>
-  </View>;
+    );
 };
 
 const styles = StyleSheet.create({

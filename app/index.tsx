@@ -2,6 +2,7 @@ import React from 'react';
 import {
   FlatList,
   StyleSheet,
+  Switch,
   Text,
   View
 } from 'react-native';
@@ -12,29 +13,20 @@ import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/
 import { Button } from '@react-navigation/elements';
 
 import Task from '../components/task';
+import { useEnergy } from '../contexts/EnergyContext';
+import { useTasks } from '../contexts/TasksContext';
 import { task } from '../types/task';
 
 
 
 export default function HomeScreen () {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  var { energy } = useEnergy();
+  var { tasks } = useTasks();
+  var [showingAllTasks, setShowingAllTasks] = React.useState(false);
 
 
-  const tasks: task[] = [
-    {id: 1, name: "Long long long long long long long long long task name", importance: 0.1, urgency: 0.2, energy: 0.4 },  
-    {id: 2, name: "Task 2", importance: 0.3, urgency: 0.6, energy: 0.3 },  
-    {id: 3, name: "Task 3", importance: 0.7, urgency: 0.5, energy: 0.2 },  
-    {id: 4, name: "Task 4", importance: 0.1, urgency: 0.2, energy: 0.4 },  
-    {id: 5, name: "Task 5", importance: 0.3, urgency: 0.6, energy: 0.3 },  
-    {id: 6, name: "Task 6", importance: 0.7, urgency: 0.5, energy: 0.2 },  
-    {id: 7, name: "Task 7", importance: 0.1, urgency: 0.2, energy: 0.4 },  
-    {id: 8, name: "Task 8", importance: 0.3, urgency: 0.6, energy: 0.3 },  
-    {id: 9, name: "Task 9", importance: 0.7, urgency: 0.5, energy: 0.2 },  
-    {id: 10, name: "Task 10", importance: 0.1, urgency: 0.2, energy: 0.4 },  
-    {id: 11, name: "Task 11", importance: 0.3, urgency: 0.6, energy: 0.3 },  
-    {id: 12, name: "Task 12", importance: 0.7, urgency: 0.5, energy: 0.2 },  
-  ]; 
-
+  var doableTasks = getDoableTasks(tasks, energy);
   return (
     <View style={{flex:1}}>
 
@@ -46,12 +38,32 @@ export default function HomeScreen () {
 
         <FlatList
           
-        data={tasks}
+        data={doableTasks}
         renderItem={({item}) => <Task task={item} />}/>
       </View>
 
+
+
       <View style={styles.containerBottom}>
-        <Text></Text>
+        <View style={{
+          flexDirection: 'row', 
+          alignContent:'center', 
+          paddingTop: 10,
+          paddingBottom: 20,
+          paddingLeft: 20,
+          paddingRight: 20,
+        }}>
+          <Switch 
+            trackColor={{false: 'black', true: 'purple'}}
+            thumbColor={'purple'}
+            value={showingAllTasks}
+            onValueChange={setShowingAllTasks}
+            onChange={(value) => console.log(value)}
+
+          > </Switch>
+          <Text>Show all tasks</Text>
+        </View>
+
         <View style={{flexDirection: 'row'}}>
 
 
@@ -68,6 +80,9 @@ export default function HomeScreen () {
               minimumTrackTintColor="purple"
               maximumTrackTintColor="black"
               thumbTintColor="purple"
+              onSlidingComplete={(value) => energy = value}
+              onValueChange={(value) => console.log(value)}
+              value={energy}
             />
           </View>
           <View style={{flex: 0,
@@ -105,6 +120,7 @@ const styles = StyleSheet.create({
     paddingRight: 25,
     paddingBottom:50,
     elevation:1,
+    paddingTop:20,
   },
   containerSlider: {
     alignItems: 'center',
@@ -124,3 +140,14 @@ function onPressAddTask () {
   return;
   // modify task list
 }  
+
+
+function getDoableTasks (tasks: task[], energy: number) {
+  var doableTasks: task[] = [];
+  for (let task of tasks) {
+    if (task.energy <= energy) {
+      doableTasks.push(task);
+    }
+  }
+  return doableTasks;
+}
