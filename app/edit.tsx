@@ -13,16 +13,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { task } from '../types/task';
 
 import { Button } from '@react-navigation/elements';
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { useTasks } from '../contexts/TasksContext';
-
-function createTask(navigationParam: NavigationProp<ParamListBase>) {
-  // there's almost certainly a better way to get the navigation prop
-  // this solution works, though!
-  const navigation = navigationParam;
-
-  navigation.goBack();
-}
 
 type RootStackParamList = {
   index: undefined;
@@ -37,7 +28,7 @@ type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'edit'>;
 
 export default function EditScreen({ navigation, route }: EditScreenProps) {
   const task = route.params?.task; // or route.params.taskId 
-  const { updateTask } = useTasks();
+  const { tasks, setTasks, updateTask } = useTasks();
   const [taskName, setTaskName] = useState(task?.name ?? '');
   const [importance, setImportance] = useState(task?.importance ?? 0);
   const [urgency, setUrgency] = useState(task?.urgency ?? 0);
@@ -49,6 +40,31 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
       const updatedTask = { ...task, name: newText };
       updateTask(updatedTask);
     }
+  }
+
+  function saveTask(): void {
+    const updatedTask: task = {
+      id: task?.id ?? (tasks.reduce((maxId, current) => Math.max(maxId, current.id), 0) + 1),
+      name: taskName,
+      importance,
+      urgency,
+      energy: taskEnergy,
+    };
+
+    if (task) {
+      updateTask(updatedTask);
+    } else {
+      setTasks(prevTasks => [...prevTasks, updatedTask]);
+    }
+
+    navigation.goBack();
+  }
+
+  function deleteTask(): void {
+    if (task) {
+      setTasks(prevTasks => prevTasks.filter(t => t.id !== task.id));
+    }
+    navigation.goBack();
   }
 
   function updateImportance(newValue: number): void {
@@ -138,6 +154,10 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         onValueChange={updateEnergy}
       />
 
+      {task && <Button onPressOut={deleteTask} color="red">Delete task</Button> }
+        
+
+
       </ScrollView>
 
       <View style={styles.containerBottom}>
@@ -146,8 +166,9 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
           <View style={styles.containerButtons}>
             <Button onPressOut={() => navigation.goBack()}>Cancel</Button>
           </View>
+
           <View style={styles.containerButtons}>
-            <Button onPressOut={() => createTask(navigation)}>Create task</Button>
+            <Button onPressOut={saveTask}>{task ? 'Save task' : 'Create task'}</Button>
           </View>
         </View>
       </View>

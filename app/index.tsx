@@ -17,28 +17,30 @@ import { useEnergy } from '../contexts/EnergyContext';
 import { useTasks } from '../contexts/TasksContext';
 import { task } from '../types/task';
 
-
-
 export default function HomeScreen () {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  var { energy } = useEnergy();
-  var { tasks } = useTasks();
-  var [showingAllTasks, setShowingAllTasks] = React.useState(false);
+  const { energy, setEnergy } = useEnergy();
+  const { tasks } = useTasks();
+  const [showingAllTasks, setShowingAllTasks] = React.useState(false);
 
 
-  var doableTasks = getDoableTasks(tasks, energy);
+  var doableTasks = getDoableTasks(tasks, energy, showingAllTasks);
   return (
     <View style={{flex:1}}>
 
       <View style={{
         marginLeft: 10,
         marginRight: 10,
-        marginBottom:130
+        marginBottom:185
       }}>
 
         <FlatList
           
-        data={doableTasks}
+        data={doableTasks.sort((a, b) => {
+          const aScore = a.importance * a.urgency;
+          const bScore = b.importance * b.urgency;
+          return bScore - aScore; // Sort in descending order
+        })}
         renderItem={({item}) => <Task task={item} />}/>
       </View>
 
@@ -58,9 +60,7 @@ export default function HomeScreen () {
             thumbColor={'purple'}
             value={showingAllTasks}
             onValueChange={setShowingAllTasks}
-            onChange={(value) => console.log(value)}
-
-          > </Switch>
+          />
           <Text>Show all tasks</Text>
         </View>
 
@@ -80,8 +80,7 @@ export default function HomeScreen () {
               minimumTrackTintColor="purple"
               maximumTrackTintColor="black"
               thumbTintColor="purple"
-              onSlidingComplete={(value) => energy = value}
-              onValueChange={(value) => console.log(value)}
+              onValueChange={setEnergy}
               value={energy}
             />
           </View>
@@ -142,7 +141,10 @@ function onPressAddTask () {
 }  
 
 
-function getDoableTasks (tasks: task[], energy: number) {
+function getDoableTasks (tasks: task[], energy: number, showingAllTasks: boolean) {
+  if (showingAllTasks) {
+    return tasks;
+  }
   var doableTasks: task[] = [];
   for (let task of tasks) {
     if (task.energy <= energy) {

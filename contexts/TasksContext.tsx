@@ -3,7 +3,7 @@ import { task } from '../types/task';
 
 interface TasksContextType {
   tasks: task[];
-  setTasks: (tasks: task[]) => void;
+  setTasks: React.Dispatch<React.SetStateAction<task[]>>;
   updateTask: (updatedTask: task) => void;
 }
 

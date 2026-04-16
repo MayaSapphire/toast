@@ -1,7 +1,7 @@
 import { Double } from "react-native/Libraries/Types/CodegenTypes";
 
 export type task = {
-   id: Number,
+   id: number,
    name: string,
    importance: Double,
    urgency: Double,

@@ -24,3 +24,11 @@ export const useEnergy = () => {
   }
   return context;
 };
+
+export const setEnergy = (energy: number) => {
+  const context = useContext(EnergyContext);
+  if (!context) {
+    throw new Error('setEnergy must be used within an EnergyProvider');
+  }
+  context.setEnergy(energy);
+};
