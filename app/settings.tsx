@@ -7,13 +7,13 @@ export default function SettingsScreen() {
       marginRight: 10,
       marginBottom:130}}
     >
-      <Text style={styles.text}>Settings screen</Text>
+      <Text style={styles.titleText}>Settings screen</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  text: {
+  titleText: {
     fontSize: 20,
     fontFamily: 'sans-serif',
     fontWeight: 'bold',

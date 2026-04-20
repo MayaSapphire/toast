@@ -7,6 +7,8 @@ import {
   View
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Slider from '@react-native-community/slider';
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 
@@ -23,6 +25,19 @@ export default function HomeScreen () {
   const { tasks } = useTasks();
   const [showingAllTasks, setShowingAllTasks] = React.useState(false);
 
+
+  const setPersistentData = async (id: string, value: string) => {
+    // Set some data persistently using AsyncStorage.
+    await AsyncStorage.setItem(id, value);
+  };
+  
+  const getPersistentData = async (id: string) => {
+    // Get the data back from AsyncStorage.
+    const name = await AsyncStorage.getItem(id);
+    console.log(name); // Should log "Mahesh" 
+  } 
+
+  getPersistentData('taskList');
 
   var doableTasks = getDoableTasks(tasks, energy, showingAllTasks);
   return (
@@ -45,6 +60,16 @@ export default function HomeScreen () {
       </View>
 
 
+      {tasks.length === 0 && (
+        <View style={{alignItems: 'center', marginBottom: 20}}>
+          <Text style={styles.titleText}>There are no tasks.</Text>
+        </View>
+      )}
+      {doableTasks.length === 0 && tasks.length > 0 && (
+        <View style={{alignItems: 'center', marginBottom: 20}}>
+          <Text style={styles.titleText}>Need more energy to do any tasks.</Text>
+        </View>
+      )}
 
       <View style={styles.containerBottom}>
         <View style={{
@@ -87,7 +112,7 @@ export default function HomeScreen () {
           <View style={{flex: 0,
   alignItems: 'center',}}>  
             
-            <Button onPress={() => navigation.navigate('edit')}>New task</Button>
+            <Button color="purple" onPress={() => navigation.navigate('edit')}>New task</Button>
             
           </View>
 
@@ -134,11 +159,6 @@ const styles = StyleSheet.create({
   },
 });
 
-function onPressAddTask () {
-
-  return;
-  // modify task list
-}  
 
 
 function getDoableTasks (tasks: task[], energy: number, showingAllTasks: boolean) {

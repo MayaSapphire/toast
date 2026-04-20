@@ -15,6 +15,7 @@ import type { task } from '../types/task';
 import { Button } from '@react-navigation/elements';
 import { useTasks } from '../contexts/TasksContext';
 
+
 type RootStackParamList = {
   index: undefined;
   about: undefined;
@@ -23,6 +24,7 @@ type RootStackParamList = {
 };
 
 type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'edit'>;
+
 
 
 
@@ -164,11 +166,11 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         <Text></Text>
         <View style={{flexDirection: 'row'}}>
           <View style={styles.containerButtons}>
-            <Button onPressOut={() => navigation.goBack()}>Cancel</Button>
+            <Button color="gray" onPressOut={() => navigation.goBack()}>Cancel</Button>
           </View>
 
           <View style={styles.containerButtons}>
-            <Button onPressOut={saveTask}>{task ? 'Save task' : 'Create task'}</Button>
+            <Button color="purple" onPressOut={saveTask}>{task ? 'Save task' : 'Create task'}</Button>
           </View>
         </View>
       </View>

@@ -1,5 +1,8 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { task } from '../types/task';
+
+const STORAGE_KEY = '@toast_tasks';
 
 interface TasksContextType {
   tasks: task[];
@@ -10,8 +13,33 @@ interface TasksContextType {
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [tasks, setTasks] = useState<task[]>([
-  ]);
+  const [tasks, setTasks] = useState<task[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load tasks from storage on mount
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          setTasks(JSON.parse(stored));
+        }
+      } catch (e) {
+        console.error('Failed to load tasks:', e);
+      }
+      setIsLoaded(true);
+    };
+    loadTasks();
+  }, []);
+
+  // Save tasks to storage whenever they change
+  useEffect(() => {
+    if (isLoaded) {
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)).catch(e => 
+        console.error('Failed to save tasks:', e)
+      );
+    }
+  }, [tasks, isLoaded]);
 
   const updateTask = (updatedTask: task) => {
     setTasks(prevTasks =>
