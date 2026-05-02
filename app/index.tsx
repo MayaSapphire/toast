@@ -33,9 +33,8 @@ export default function HomeScreen () {
   
   const getPersistentData = async (id: string) => {
     // Get the data back from AsyncStorage.
-    const name = await AsyncStorage.getItem(id);
-    console.log(name); // Should log "Mahesh" 
-  } 
+    return await AsyncStorage.getItem(id);
+  };
 
   getPersistentData('taskList');
 
@@ -74,9 +73,10 @@ export default function HomeScreen () {
       <View style={styles.containerBottom}>
         <View style={{
           flexDirection: 'row', 
-          alignContent:'center', 
-          paddingTop: 10,
-          paddingBottom: 20,
+          alignItems: 'center',
+
+          paddingTop: 0,
+          paddingBottom: 10,
           paddingLeft: 20,
           paddingRight: 20,
         }}>

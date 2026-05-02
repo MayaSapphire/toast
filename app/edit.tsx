@@ -117,6 +117,11 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
       <Text style={styles.titleText}>
         Task Importance
       </Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10}}>
+        <Button color="purple" onPressOut={() => setImportance(0.25)}>Low</Button>
+        <Button color="purple" onPressOut={() => setImportance(0.5)}>Medium</Button>
+        <Button color="purple" onPressOut={() => setImportance(0.75)}>High</Button>
+      </View>
       <Slider
         style={{height: 40}}
         minimumValue={0}
@@ -131,6 +136,11 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
       <Text style={styles.titleText}>
         Task Urgency
       </Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10}}>
+        <Button color="purple" onPressOut={() => setUrgency(0.25)}>Low</Button>
+        <Button color="purple" onPressOut={() => setUrgency(0.5)}>Medium</Button>
+        <Button color="purple" onPressOut={() => setUrgency(0.75)}>High</Button>
+      </View>
       <Slider
         style={{height: 40}}
         minimumValue={0}
@@ -145,6 +155,13 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
       <Text style={styles.titleText}>
         Task Energy
       </Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10}}>
+        <Button color="purple" onPressOut={() => setTaskEnergy(0.25)}>Low</Button>
+        <Button color="purple" onPressOut={() => setTaskEnergy(0.5)}>Medium</Button>
+        <Button color="purple" onPressOut={() => setTaskEnergy(0.75)}>High</Button>
+      </View>
+
+
       <Slider
         style={{height: 40}}
         minimumValue={0}
@@ -186,7 +203,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-    paddingTop:10,
+    paddingTop:20,
+    paddingBottom:10,
   },
   containerBottom: {
     backgroundColor: 'white',
@@ -198,7 +216,7 @@ const styles = StyleSheet.create({
     width:"100%",
     padding: 0,
     paddingRight: 25,
-    paddingBottom:50,
+    paddingBottom:60,
     elevation:1,
   },  
   containerButtons: {

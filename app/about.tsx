@@ -7,16 +7,26 @@ export default function AboutScreen() {
         marginRight: 10,
         marginBottom:130}}
       >
-        <Text style={styles.text}>About Toast</Text>
+        <Text style={styles.titleText}>Task Organizing Application for Sorting by Top-priority</Text>
+        <Text style={styles.text}>Version 2026.5.2 - Created by MayaSapphire
+        </Text>
       </View>
     );
 }
 
 const styles = StyleSheet.create({
-  text: {
+  titleText: {
     fontSize: 20,
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-    paddingTop:10,
+    paddingTop:20,
+    paddingBottom:10,
+    textAlign: 'center',
   },
-});
+  text: {
+    fontSize: 16,
+    fontFamily: 'sans-serif',
+    paddingBottom:10,
+    textAlign: 'center',}
+  },
+);

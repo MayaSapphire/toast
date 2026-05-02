@@ -7,7 +7,7 @@ export default function SettingsScreen() {
       marginRight: 10,
       marginBottom:130}}
     >
-      <Text style={styles.titleText}>Settings screen</Text>
+      <Text style={styles.titleText}>This screen is a placeholder...for now</Text>
     </View>
   );
 }
