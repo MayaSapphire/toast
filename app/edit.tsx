@@ -5,90 +5,94 @@ import {
   Text,
   TextInput,
   View,
+  Button,
 } from 'react-native';
 
 import Slider from '@react-native-community/slider';
-
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import type { task } from '../types/task';
-
-import { Button } from '@react-navigation/elements';
 import { useTasks } from '../contexts/TasksContext';
-
-
-type RootStackParamList = {
-  index: undefined;
-  about: undefined;
-  settings: undefined;
-  edit: { task?: task } | undefined;
-};
-
-type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'edit'>;
+import Dropdown from 'react-native-input-select';
 
 
 
 
-export default function EditScreen({ navigation, route }: EditScreenProps) {
-  const task = route.params?.task; // or route.params.taskId 
+
+export default function EditScreen() {
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const { tasks, setTasks, updateTask } = useTasks();
-  const [taskName, setTaskName] = useState(task?.name ?? '');
-  const [importance, setImportance] = useState(task?.importance ?? 0);
-  const [urgency, setUrgency] = useState(task?.urgency ?? 0);
-  const [taskEnergy, setTaskEnergy] = useState(task?.energy ?? 0);
+  const taskId = id ? Number(id) : undefined;
+  const currentTask = taskId ? tasks.find(t => t.id === taskId) : undefined;
+  const [taskName, setTaskName] = useState(currentTask?.name ?? '');
+  const [importance, setImportance] = useState(currentTask?.importance ?? 0);
+  const [urgency, setUrgency] = useState(currentTask?.urgency ?? 0);
+  const [urgencyType, setUrgencyType] = useState(currentTask?.urgencyType ?? "fixed");
+  const [taskEnergy, setTaskEnergy] = useState(currentTask?.energy ?? 0);
 
   function setText(newText: string): void {
     setTaskName(newText);
-    if (task) {
-      const updatedTask = { ...task, name: newText };
+    if (currentTask) {
+      const updatedTask = { ...currentTask, name: newText };
       updateTask(updatedTask);
     }
   }
 
   function saveTask(): void {
     const updatedTask: task = {
-      id: task?.id ?? (tasks.reduce((maxId, current) => Math.max(maxId, current.id), 0) + 1),
+      id: currentTask?.id ?? (tasks.reduce((maxId, current) => Math.max(maxId, current.id), 0) + 1),
       name: taskName,
       importance,
       urgency,
       energy: taskEnergy,
+      isCompleted: Boolean(),
+      urgencyType: String(),
     };
 
-    if (task) {
+    if (currentTask) { // if the task already
       updateTask(updatedTask);
     } else {
       setTasks(prevTasks => [...prevTasks, updatedTask]);
     }
 
-    navigation.goBack();
+    router.back();
   }
 
   function deleteTask(): void {
-    if (task) {
-      setTasks(prevTasks => prevTasks.filter(t => t.id !== task.id));
+    if (currentTask) {
+      setTasks(prevTasks => prevTasks.filter(t => t.id !== currentTask.id));
     }
-    navigation.goBack();
+    router.back();
   }
 
   function updateImportance(newValue: number): void {
     setImportance(newValue);
-    if (task) {
-      const updatedTask = { ...task, importance: newValue };
+    if (currentTask) {
+      const updatedTask = { ...currentTask, importance: newValue };
       updateTask(updatedTask);
     }
   }
 
   function updateUrgency(newValue: number): void {
     setUrgency(newValue);
-    if (task) {
-      const updatedTask = { ...task, urgency: newValue };
+    if (currentTask) {
+      const updatedTask = { ...currentTask, urgency: newValue };
+      updateTask(updatedTask);
+    }
+  }
+
+  function updateUrgencyType(newValue: string): void {
+    setUrgencyType(newValue);
+    if (currentTask) {
+      const updatedTask = { ...currentTask, urgencyType: newValue };
       updateTask(updatedTask);
     }
   }
 
   function updateEnergy(newValue: number): void {
     setTaskEnergy(newValue);
-    if (task) {
-      const updatedTask = { ...task, energy: newValue };
+    if (currentTask) {
+      const updatedTask = { ...currentTask, energy: newValue };
       updateTask(updatedTask);
     }
   }
@@ -118,9 +122,9 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         Task Importance
       </Text>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10}}>
-        <Button color="purple" onPressOut={() => setImportance(0.25)}>Low</Button>
-        <Button color="purple" onPressOut={() => setImportance(0.5)}>Medium</Button>
-        <Button color="purple" onPressOut={() => setImportance(0.75)}>High</Button>
+        <Button color="purple" onPress={() => setImportance(0.25)} title="Low" />
+        <Button color="purple" onPress={() => setImportance(0.5)} title="Medium" />
+        <Button color="purple" onPress={() => setImportance(0.75)} title="High" />
       </View>
       <Slider
         style={{height: 40}}
@@ -136,31 +140,58 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
       <Text style={styles.titleText}>
         Task Urgency
       </Text>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10}}>
-        <Button color="purple" onPressOut={() => setUrgency(0.25)}>Low</Button>
-        <Button color="purple" onPressOut={() => setUrgency(0.5)}>Medium</Button>
-        <Button color="purple" onPressOut={() => setUrgency(0.75)}>High</Button>
-      </View>
-      <Slider
-        style={{height: 40}}
-        minimumValue={0}
-        maximumValue={1}
-        minimumTrackTintColor="purple"
-        maximumTrackTintColor="black"
-        thumbTintColor="purple"
-        value={urgency}
-        onValueChange={updateUrgency}
-      />
+      <Dropdown
+        label="Select urgency behavior:"
+        labelStyle={styles.pText}
+        placeholder="Select an option..."
+        options={[
+          { label: 'Do not change', value: 'fixed' },
+          { label: 'Gradually increase over time', value: 'gradual' },
+          { label: 'Use deadline', value: 'deadline' },
+          { label: 'Use start date and deadline', value: 'startdate-deadline' },
+        ]}
+        selectedValue={urgencyType}
+        onValueChange={(urgencyType) => updateUrgencyType(urgencyType as string)}
+        primaryColor={'purple'}
+        isMultiple={false}
+      /> 
+
+      {urgencyType === 'fixed' && (
+        <Text style={styles.pText}>How urgent should the task be?</Text>
+      )}
+      {urgencyType === 'gradual' && (
+        <Text style={styles.pText}>How urgent should the task be at the start?</Text>
+      )}
+      {(urgencyType === 'fixed' || urgencyType === 'gradual') && (
+        
+        <View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingTop: 15}}>
+            <Button color="purple" onPress={() => setUrgency(0.25)} title="Low" />
+            <Button color="purple" onPress={() => setUrgency(0.5)} title="Medium" />
+            <Button color="purple" onPress={() => setUrgency(0.75)} title="High" />
+          </View>
+          <Slider
+            style={{height: 40}}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="purple"
+            maximumTrackTintColor="black"
+            thumbTintColor="purple"
+            value={urgency}
+            onValueChange={updateUrgency}
+          />
+        </View>
+      )}
+
 
       <Text style={styles.titleText}>
         Task Energy
       </Text>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10}}>
-        <Button color="purple" onPressOut={() => setTaskEnergy(0.25)}>Low</Button>
-        <Button color="purple" onPressOut={() => setTaskEnergy(0.5)}>Medium</Button>
-        <Button color="purple" onPressOut={() => setTaskEnergy(0.75)}>High</Button>
+          <Button color="purple" onPress={() => setTaskEnergy(0.25)} title="Low" />
+          <Button color="purple" onPress={() => setTaskEnergy(0.5)} title="Medium" />
+          <Button color="purple" onPress={() => setTaskEnergy(0.75)} title="High" />
       </View>
-
 
       <Slider
         style={{height: 40}}
@@ -173,7 +204,25 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         onValueChange={updateEnergy}
       />
 
-      {task && <Button onPressOut={deleteTask} color="red">Delete task</Button> }
+      <View style={styles.button}>
+        {currentTask && 
+          <Button onPress={deleteTask} 
+                  color="purple" 
+                  title="Mark as completed" 
+          /> 
+          
+        }
+      </View>
+      
+      <View style={styles.button}>
+        {currentTask && 
+          <Button onPress={deleteTask} 
+                  color="red" 
+                  title="Delete task" 
+          /> 
+          
+        }
+      </View>
         
 
 
@@ -183,11 +232,11 @@ export default function EditScreen({ navigation, route }: EditScreenProps) {
         <Text></Text>
         <View style={{flexDirection: 'row'}}>
           <View style={styles.containerButtons}>
-            <Button color="gray" onPressOut={() => navigation.goBack()}>Cancel</Button>
+            <Button color="gray" onPress={() => router.back()} title="Cancel" />
           </View>
 
           <View style={styles.containerButtons}>
-            <Button color="purple" onPressOut={saveTask}>{task ? 'Save task' : 'Create task'}</Button>
+            <Button color="purple" onPress={saveTask} title={currentTask ? 'Save task' : 'Create task'} />
           </View>
         </View>
       </View>
@@ -206,6 +255,12 @@ const styles = StyleSheet.create({
     paddingTop:20,
     paddingBottom:10,
   },
+  pText: {
+    fontSize: 14,
+    fontFamily: 'sans-serif',
+    color: 'black',
+    padding: 0,
+  },
   containerBottom: {
     backgroundColor: 'white',
     flexDirection: 'column',
@@ -221,17 +276,19 @@ const styles = StyleSheet.create({
   },  
   containerButtons: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
+    padding: 10,
   },
   containerButton: {
     flex: 0,
     alignItems: 'center',
+    padding: 10,
   },
   button: {
     alignItems: 'center',
-    backgroundColor: 'lavender',
-    padding: 20,
-    marginBottom: 10,
+    padding: 10,
+    paddingTop: 10,
+    marginBottom: 0,
     borderRadius:10,
   },
 });

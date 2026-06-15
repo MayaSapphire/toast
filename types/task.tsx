@@ -6,4 +6,6 @@ export type task = {
    importance: Double,
    urgency: Double,
    energy: Double, 
+   isCompleted: boolean,
+   urgencyType: string
   }

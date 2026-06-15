@@ -9,10 +9,9 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Slider from '@react-native-community/slider';
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
-
-import { Button } from '@react-navigation/elements';
+import PurpleSlider from '../components/PurpleSlider';
+import { useRouter } from 'expo-router';
+import { Button } from 'react-native';
 
 import Task from '../components/task';
 import { useEnergy } from '../contexts/EnergyContext';
@@ -20,7 +19,7 @@ import { useTasks } from '../contexts/TasksContext';
 import { task } from '../types/task';
 
 export default function HomeScreen () {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const router = useRouter();
   const { energy, setEnergy } = useEnergy();
   const { tasks } = useTasks();
   const [showingAllTasks, setShowingAllTasks] = React.useState(false);
@@ -98,13 +97,7 @@ export default function HomeScreen () {
                 Current Energy
               </Text>
             </View>
-            <Slider
-              style={{width: 200, height: 40}}
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor="purple"
-              maximumTrackTintColor="black"
-              thumbTintColor="purple"
+            <PurpleSlider
               onValueChange={setEnergy}
               value={energy}
             />
@@ -112,7 +105,7 @@ export default function HomeScreen () {
           <View style={{flex: 0,
   alignItems: 'center',}}>  
             
-            <Button color="purple" onPress={() => navigation.navigate('edit')}>New task</Button>
+            <Button color="purple" onPress={() => router.push('/edit')} title="New task" />
             
           </View>
 
@@ -148,7 +141,8 @@ const styles = StyleSheet.create({
   },
   containerSlider: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
+    width: 800,
   },
   button: {
     alignItems: 'center',

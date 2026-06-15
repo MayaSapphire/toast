@@ -1,5 +1,5 @@
 import Slider from '@react-native-community/slider';
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTasks } from '../contexts/TasksContext';
@@ -7,7 +7,7 @@ import { task } from "../types/task";
 
 
 const Task = ({ task }: { task: task }) => {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const router = useRouter();
   const { updateTask } = useTasks();
 
   const updateImportance = (value: number) => {
@@ -21,10 +21,14 @@ const Task = ({ task }: { task: task }) => {
   const updateEnergy = (value: number) => {
     updateTask({ ...task, energy: value });
   };
+
+  const updateUrgencyType = (value: string) => {
+    updateTask({ ...task, urgencyType: value});
+  }
   return(
     <TouchableOpacity
         onPress={() => {
-        navigation.navigate('edit', { task: task });
+        router.push({ pathname: '/edit', params: { id: task.id.toString() } });
         }}
     >
         <Text style={styles.titleText}>{task.name}</Text>
