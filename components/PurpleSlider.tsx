@@ -3,9 +3,9 @@ import { View } from 'react-native';
 
 export default function PurpleSlider({ value, onValueChange }: { value: number; onValueChange: (value: number) => void }) {
   return (
-    <View>
+    <View style={{ alignSelf: 'stretch' }}>
       <Slider
-        style={{ height: 40 }}
+        style={{ width: '100%', height: 40 }}
         minimumValue={0}
         maximumValue={1}
         minimumTrackTintColor="purple"
