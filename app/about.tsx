@@ -8,7 +8,7 @@ export default function AboutScreen() {
         marginBottom:130}}
       >
         <Text style={styles.titleText}>Task Organizing Application for Sorting by Top-priority</Text>
-        <Text style={styles.text}>Version 2026.5.2 - Created by MayaSapphire
+        <Text style={styles.text}>Version 2026.6.19 - Created by MayaSapphire
         </Text>
       </View>
     );
