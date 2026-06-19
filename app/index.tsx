@@ -13,10 +13,10 @@ import PurpleSlider from '../components/PurpleSlider';
 import { useRouter } from 'expo-router';
 import { Button } from 'react-native';
 
-import Task from '../components/task';
+import TaskComponent from '../components/task';
 import { useEnergy } from '../contexts/EnergyContext';
 import { useTasks } from '../contexts/TasksContext';
-import { task } from '../types/task';
+import { Task } from '../types/task';
 
 export default function HomeScreen () {
   const router = useRouter();
@@ -50,11 +50,18 @@ export default function HomeScreen () {
         <FlatList
           
         data={doableTasks.sort((a, b) => {
+          if (a.urgencyType === 'startdate-deadline' || b.urgencyType === 'startdate-deadline') {
+            const aDeadline = new Date(a.endDate).getTime();
+            if (isNaN(aDeadline)) return 1; // Treat tasks without a valid deadline as less urgent
+            const bDeadline = new Date(b.endDate).getTime();
+            if (isNaN(bDeadline)) return -1; // Treat tasks without a valid deadline as less urgent
+            return aDeadline - bDeadline; // Sort by deadline in ascending order
+          }
           const aScore = a.importance * a.urgency;
           const bScore = b.importance * b.urgency;
           return bScore - aScore; // Sort in descending order
         })}
-        renderItem={({item}) => <Task task={item} />}/>
+        renderItem={({item}) => <TaskComponent task={item} />}/>
       </View>
 
 
@@ -155,11 +162,11 @@ const styles = StyleSheet.create({
 
 
 
-function getDoableTasks (tasks: task[], energy: number, showingAllTasks: boolean) {
+function getDoableTasks (tasks: Task[], energy: number, showingAllTasks: boolean) {
   if (showingAllTasks) {
     return tasks;
   }
-  var doableTasks: task[] = [];
+  var doableTasks: Task[] = [];
   for (let task of tasks) {
     if (task.energy <= energy) {
       doableTasks.push(task);

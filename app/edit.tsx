@@ -12,11 +12,9 @@ import DateTimePicker from 'react-native-ui-datepicker';
 
 import PurpleSlider from '../components/PurpleSlider';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import type { task } from '../types/task';
+import { Task } from '../types/task';
 import { useTasks } from '../contexts/TasksContext';
 import Dropdown from 'react-native-input-select';
-
-import dayjs, { Dayjs } from 'dayjs';
 
 export default function EditScreen() {
   const router = useRouter();
@@ -24,110 +22,208 @@ export default function EditScreen() {
   const { tasks, setTasks, updateTask } = useTasks();
   const taskId = id ? Number(id) : undefined;
   const currentTask = taskId ? tasks.find(t => t.id === taskId) : undefined;
-  const [taskName, setTaskName] = useState(currentTask?.name ?? '');
-  const [importance, setImportance] = useState(currentTask?.importance ?? 0);
-  const [urgency, setUrgency] = useState(currentTask?.urgency ?? 0);
-  const [urgencyType, setUrgencyType] = useState(currentTask?.urgencyType ?? "fixed");
-  const [taskEnergy, setTaskEnergy] = useState(currentTask?.energy ?? 0);
-  const [taskStartDate, setTaskStartDate] = useState(currentTask?.startDate ?? new Date());
-  const [taskEndDate, setTaskEndDate] = useState(currentTask?.endDate ?? new Date());
-  const [urgencyChangeRate, setUrgencyChangeRate] = useState(currentTask?.urgencyChangeRate ?? 0);
-  const [date, setDate] = useState<Dayjs>(dayjs());
+  const [taskName, setTaskName] = React.useState(currentTask?.name ?? '');
+  const [importance, setImportance] = React.useState(currentTask?.importance ?? 0);
+  const [urgency, setUrgency] = React.useState(currentTask?.urgency ?? 0);
+  const [urgencyType, setUrgencyType] = React.useState(currentTask?.urgencyType ?? "fixed");
+  const [taskEnergy, setTaskEnergy] = React.useState(currentTask?.energy ?? 0);
+  const [taskStartDate, setTaskStartDate] = React.useState<Date>(currentTask?.startDate ?? new Date());
+  const [taskEndDate, setTaskEndDate] = React.useState<Date>(currentTask?.endDate ?? new Date());
+  const [urgencyChangeRate, setUrgencyChangeRate] = React.useState(currentTask?.urgencyChangeRate ?? 0);
 
 
   function setText(newText: string): void {
     setTaskName(newText);
     if (currentTask) {
-      const updatedTask = { ...currentTask, name: newText };
+      const updatedTask = new Task(
+        currentTask.id,
+        newText,
+        currentTask.importance,
+        currentTask.urgency,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        currentTask.startDate,
+        currentTask.endDate,
+        currentTask.urgencyChangeRate ?? 0,
+      );
       updateTask(updatedTask);
     }
   }
 
-  function saveTask(): void {
-    const updatedTask: task = {
-      id: currentTask?.id ?? (tasks.reduce((maxId, current) => Math.max(maxId, current.id), 0) + 1),
-      name: taskName,
+  const updateImportance = (value: number) => {
+    setImportance(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        value,
+        currentTask.urgency,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        currentTask.startDate,
+        currentTask.endDate,
+        currentTask.urgencyChangeRate ?? 0,
+      );
+      updateTask(updatedTask);
+    }
+  };
+
+  const updateUrgencyType = (value: string) => {
+    setUrgencyType(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        currentTask.importance,
+        currentTask.urgency,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        value,
+        currentTask.startDate,
+        currentTask.endDate,
+        currentTask.urgencyChangeRate ?? 0,
+      );
+      updateTask(updatedTask);
+    }
+  };
+
+  const updateUrgency = (value: number) => {
+    setUrgency(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        currentTask.importance,
+        value,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        currentTask.startDate,
+        currentTask.endDate,
+        currentTask.urgencyChangeRate ?? 0,
+      );
+      updateTask(updatedTask);
+    }
+  };
+
+  const updateUrgencyChangeRate = (value: number) => {
+    setUrgencyChangeRate(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        currentTask.importance,
+        currentTask.urgency,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        currentTask.startDate,
+        currentTask.endDate,
+        value,
+      );
+      updateTask(updatedTask);
+    }
+  };
+
+  const updateEnergy = (value: number) => {
+    setTaskEnergy(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        currentTask.importance,
+        currentTask.urgency,
+        value,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        currentTask.startDate,
+        currentTask.endDate,
+        currentTask.urgencyChangeRate ?? 0,
+      );
+      updateTask(updatedTask);
+    }
+  };
+
+  const updateStartDate = (value: Date) => {
+    setTaskStartDate(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        currentTask.importance,
+        currentTask.urgency,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        value,
+        currentTask.endDate,
+        currentTask.urgencyChangeRate ?? 0,
+      );
+      updateTask(updatedTask);
+    }
+  };
+
+  const updateEndDate = (value: Date) => {
+    setTaskEndDate(value);
+    if (currentTask) {
+      const updatedTask = new Task(
+        currentTask.id,
+        currentTask.name,
+        currentTask.importance,
+        currentTask.urgency,
+        currentTask.energy,
+        currentTask.isCompleted ?? false,
+        currentTask.urgencyType,
+        currentTask.startDate,
+        value,
+        currentTask.urgencyChangeRate ?? 0,
+      );
+      updateTask(updatedTask);
+    }
+  };
+  const markCompleted = () => {
+    if (!currentTask) return;
+    const completedTask = new Task(
+      currentTask.id,
+      currentTask.name,
+      currentTask.importance,
+      currentTask.urgency,
+      currentTask.energy,
+      true,
+      currentTask.urgencyType,
+      currentTask.startDate,
+      currentTask.endDate,
+      currentTask.urgencyChangeRate ?? 0,
+    );
+    updateTask(completedTask);
+    router.back();
+  };
+
+  const deleteTask = () => {
+    if (!currentTask) return;
+    setTasks(tasks.filter(t => t.id !== currentTask.id));
+    router.back();
+  };
+
+  const saveTask = () => {
+    const updatedTask = new Task(
+      currentTask?.id ?? Math.max(0, ...tasks.map(t => t.id), 0) + 1,
+      taskName,
       importance,
       urgency,
-      energy: taskEnergy,
-      isCompleted: currentTask?.isCompleted ?? false,
-      urgencyType: urgencyType,
-      startDate: taskStartDate,
-      endDate: taskEndDate,
-      urgencyChangeRate: urgencyChangeRate,
-    };
-
-    if (currentTask) { // if the task already exists, update it
-      updateTask(updatedTask);
-    } else {
-      setTasks(prevTasks => [...prevTasks, updatedTask]);
-    }
-
+      taskEnergy,
+      currentTask?.isCompleted ?? false,
+      urgencyType,
+      taskStartDate,
+      taskEndDate,
+      currentTask?.urgencyChangeRate ?? 0,
+    );
+    updateTask(updatedTask);
     router.back();
   }
-
-  function deleteTask(): void {
-    if (currentTask) {
-      setTasks(prevTasks => prevTasks.filter(t => t.id !== currentTask.id));
-    }
-    router.back();
-  }
-
-  function updateImportance(newValue: number): void {
-    setImportance(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, importance: newValue };
-      updateTask(updatedTask);
-    }
-  }
-
-  function updateUrgency(newValue: number): void {
-    setUrgency(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, urgency: newValue };
-      updateTask(updatedTask);
-    }
-  }
-
-  function updateUrgencyType(newValue: string): void {
-    setUrgencyType(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, urgencyType: newValue };
-      updateTask(updatedTask);
-    }
-  }
-
-  function updateUrgencyChangeRate(newValue: number): void {
-    setUrgencyChangeRate(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, updateUrgencyChangeRate: newValue };
-      updateTask(updatedTask);
-    }
-  }
-
-  function updateEnergy(newValue: number): void {
-    setTaskEnergy(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, energy: newValue };
-      updateTask(updatedTask);
-    }
-  }
-
-  function updateStartDate(newValue: Date): void {
-    setTaskStartDate(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, startDate: newValue };
-      updateTask(updatedTask);
-    }
-  } 
-
-  function updateEndDate(newValue: Date): void {
-    setTaskEndDate(newValue);
-    if (currentTask) {
-      const updatedTask = { ...currentTask, endDate: newValue };
-      updateTask(updatedTask);
-    }
-  }
+  
 
   return (
 
@@ -149,7 +245,7 @@ export default function EditScreen() {
           <TextInput
           placeholder="Task name"
           value={taskName}
-          onChangeText={newText => setText(newText)}
+          onChangeText={setTaskName}
           style={{
             height: 60,
             padding: 5,
@@ -169,11 +265,11 @@ export default function EditScreen() {
           <Button color="purple" onPress={() => setImportance(0.5)} title="Medium" />
           <Button color="purple" onPress={() => setImportance(0.75)} title="High" />
         </View>
+
         <PurpleSlider
           value={importance}
           onValueChange={updateImportance}
         />
-
         <Text style={styles.titleText}>
           Task Urgency
         </Text>
@@ -186,11 +282,10 @@ export default function EditScreen() {
             { label: 'Use deadline', value: 'startdate-deadline' },
           ]}
           selectedValue={urgencyType ?? 'fixed'}
-          onValueChange={(urgencyType) => updateUrgencyType(urgencyType as string)}
+          onValueChange={(value) => updateUrgencyType(value as string)}
           primaryColor={'purple'}
           isMultiple={false}
         /> 
-
         {urgencyType === 'fixed' && (
           <Text style={styles.pText}>How urgent should the task be?</Text>
         )}
@@ -268,16 +363,13 @@ export default function EditScreen() {
           onValueChange={updateEnergy}
         />
 
-        <View style={styles.button}>
           {currentTask && 
-            <Button onPress={deleteTask} 
+            <Button onPress={markCompleted} 
                     color="purple" 
                     title="Mark as completed" 
             /> 
             
           }
-        </View>
-        
         <View style={styles.button}>
           {currentTask && 
             <Button onPress={deleteTask} 

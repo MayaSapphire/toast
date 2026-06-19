@@ -1,19 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { task } from '../types/task';
+import { Task } from '../types/task';
 
 const STORAGE_KEY = '@toast_tasks';
 
 interface TasksContextType {
-  tasks: task[];
-  setTasks: React.Dispatch<React.SetStateAction<task[]>>;
-  updateTask: (updatedTask: task) => void;
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  updateTask: (updatedTask: Task) => void;
 }
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
 
 export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [tasks, setTasks] = useState<task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load tasks from storage on mount
@@ -41,10 +41,14 @@ export const TasksProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, [tasks, isLoaded]);
 
-  const updateTask = (updatedTask: task) => {
-    setTasks(prevTasks =>
-      prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t)
-    );
+  const updateTask = (updatedTask: Task) => {
+    setTasks(prevTasks => {
+      const exists = prevTasks.some(t => t.id === updatedTask.id);
+      if (exists) {
+        return prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t);
+      }
+      return [...prevTasks, updatedTask];
+    });
   };
 
   return (
