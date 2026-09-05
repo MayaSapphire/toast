@@ -7,7 +7,7 @@ import { Task } from "../types/task";
 
 
 const TaskComponent = ({ task }: { task: Task }) => {
-  const { tasks, setTasks, updateTask } = useTasks();
+  const {  setTasks } = useTasks();
     
   const router = useRouter();
 
@@ -25,16 +25,17 @@ const TaskComponent = ({ task }: { task: Task }) => {
     task.setUrgency(newValue);
   }
     
-  function updateUrgencyChangeRate(newValue: number): void {
-    task.setUrgencyChangeRate(newValue);
-  }
     
   function updateEnergy(newValue: number): void {
     task.setEnergy(newValue);
   }
 
   return (
-    <TouchableOpacity style={{ padding: 10 }} onLongPress={deleteTask}>
+    <TouchableOpacity
+      style={{ padding: 10 }}
+      onLongPress={deleteTask}
+      onPress={() => router.push(`/edit?id=${task.id}`)}
+    >
       <Text style={styles.titleText}>{task.name}</Text>
       <View style={{flexDirection: 'column', justifyContent: 'space-between', paddingRight: 20, paddingLeft: 20}}>
         <View style={{flexDirection: 'row',}}>

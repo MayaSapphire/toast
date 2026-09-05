@@ -1,4 +1,3 @@
-import { DateType } from "react-native-ui-datepicker";
 import { Double } from "react-native/Libraries/Types/CodegenTypes";
 
 export class Task {

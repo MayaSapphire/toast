@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 
 export default function AboutScreen() {
   return (
@@ -8,6 +8,10 @@ export default function AboutScreen() {
         marginBottom:130}}
       >
         <Text style={styles.titleText}>Task Organizing Application for Sorting by Top-priority</Text>
+        <Image 
+          source={require('../assets/images/logo.png')}
+          style={{ width: 100, height: 100, alignSelf: 'center', marginBottom: 20 }}
+        />
         <Text style={styles.text}>Version 2026.6.19 - Created by MayaSapphire
         </Text>
       </View>

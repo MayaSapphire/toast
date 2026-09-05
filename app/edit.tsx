@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -32,24 +32,6 @@ export default function EditScreen() {
   const [urgencyChangeRate, setUrgencyChangeRate] = React.useState(currentTask?.urgencyChangeRate ?? 0);
 
 
-  function setText(newText: string): void {
-    setTaskName(newText);
-    if (currentTask) {
-      const updatedTask = new Task(
-        currentTask.id,
-        newText,
-        currentTask.importance,
-        currentTask.urgency,
-        currentTask.energy,
-        currentTask.isCompleted ?? false,
-        currentTask.urgencyType,
-        currentTask.startDate,
-        currentTask.endDate,
-        currentTask.urgencyChangeRate ?? 0,
-      );
-      updateTask(updatedTask);
-    }
-  }
 
   const updateImportance = (value: number) => {
     setImportance(value);
@@ -364,11 +346,12 @@ export default function EditScreen() {
         />
 
           {currentTask && 
-            <Button onPress={markCompleted} 
-                    color="purple" 
-                    title="Mark as completed" 
-            /> 
-            
+            <View style={styles.button}>
+              <Button onPress={markCompleted} 
+                      color="purple" 
+                      title="Mark as completed" 
+              /> 
+            </View>    
           }
         <View style={styles.button}>
           {currentTask && 
