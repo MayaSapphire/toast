@@ -12,7 +12,7 @@ export default function AboutScreen() {
           source={require('../assets/images/logo.png')}
           style={{ width: 100, height: 100, alignSelf: 'center', marginBottom: 20 }}
         />
-        <Text style={styles.text}>Version 2026.6.19 - Created by MayaSapphire
+        <Text style={styles.text}>Version 0.1.0 - Created by MayaSapphire
         </Text>
       </View>
     );

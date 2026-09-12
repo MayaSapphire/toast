@@ -18,6 +18,7 @@ export default function SettingsScreen() {
       marginRight: 10,
       marginBottom:130}}
     >
+      <Text style={styles.titleText}>Import/Export Tasks</Text>
       <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingHorizontal: 10}}>
         <Button color="purple" onPress={importTasks} title="Import tasks" />
         <Button color="purple" onPress={exportTasks} title="Export tasks" />
@@ -32,5 +33,6 @@ const styles = StyleSheet.create({
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
     paddingTop:10,
+    paddingBottom:10,
   },
 });
